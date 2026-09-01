@@ -45,9 +45,9 @@ export function Header() {
             <line x1="4" y1="15" x2="20" y2="15" />
           </svg>
         </div>
-        <div>
-          <h1 className="text-sm font-semibold leading-tight">Lab Rax Planner</h1>
-          <p className="text-[11px] leading-tight text-white/45">
+        <div className="min-w-0">
+          <h1 className="truncate text-sm font-semibold leading-tight">Lab Rax Planner</h1>
+          <p className="truncate text-[11px] leading-tight text-white/45">
             Visualize your 3D-printed 10" rack
           </p>
         </div>
