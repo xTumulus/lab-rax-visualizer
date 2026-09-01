@@ -25,7 +25,7 @@ function patternText(pattern: PatternId, solid: boolean): { pattern: string; sol
  */
 export function buildPartsList(state: BuildState): PartRow[] {
   const rows: PartRow[] = []
-  const { parts, toggles, rackU, shelves } = state
+  const { parts, toggles, shelves } = state
 
   // Fixed-count structural parts.
   const fixed: PartType[] = [
@@ -43,14 +43,7 @@ export function buildPartsList(state: BuildState): PartRow[] {
   for (const part of fixed) {
     if (isOptional(part) && !toggles[part]) continue
 
-    // Horizontal edges scale with height: two per U level (front/back) minus
-    // the hero edge which is counted separately — kept simple/estimate here.
-    let qty: number
-    if (part === 'horizontalEdges') {
-      qty = rackU * 2 + 1 // rough: top+bottom rings plus intermediate supports
-    } else {
-      qty = BASE_QUANTITIES[part] ?? 0
-    }
+    const qty = BASE_QUANTITIES[part] ?? 0
     if (qty <= 0) continue
 
     const style = parts[part]
