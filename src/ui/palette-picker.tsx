@@ -13,11 +13,11 @@ export function PalettePicker({ color, palette, onSelect }: Props) {
 
   useEffect(() => {
     if (!open) return
-    const onDown = (e: MouseEvent) => {
+    const onDown = (e: PointerEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
-    document.addEventListener('mousedown', onDown)
-    return () => document.removeEventListener('mousedown', onDown)
+    document.addEventListener('pointerdown', onDown)
+    return () => document.removeEventListener('pointerdown', onDown)
   }, [open])
 
   const rows = [palette.slice(0, 3), palette.slice(3, 6)]
@@ -28,7 +28,7 @@ export function PalettePicker({ color, palette, onSelect }: Props) {
         type="button"
         title={color}
         onClick={() => setOpen((v) => !v)}
-        className="h-7 w-7 rounded border border-white/20 shadow-inner"
+        className="h-7 w-7 rounded border border-white/20 shadow-inner pointer-coarse:h-11 pointer-coarse:w-11"
         style={{ background: color }}
       />
       {open && (
@@ -45,7 +45,7 @@ export function PalettePicker({ color, palette, onSelect }: Props) {
                     setOpen(false)
                   }}
                   style={{ background: c }}
-                  className={`h-10 w-10 rounded border shadow-inner transition ${
+                  className={`h-10 w-10 rounded border shadow-inner transition pointer-coarse:h-12 pointer-coarse:w-12 ${
                     c.toLowerCase() === color.toLowerCase()
                       ? 'border-accent ring-2 ring-accent'
                       : 'border-white/30 hover:border-white/60'

@@ -23,17 +23,17 @@ export function PartControl({ part }: { part: PartType }) {
       }`}
     >
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           {optional && (
             <input
               type="checkbox"
               checked={enabled}
               onChange={() => toggle(part as OptionalPart)}
-              className="accent-accent"
+              className="h-5 w-5 accent-accent pointer-coarse:h-6 pointer-coarse:w-6"
               title={enabled ? 'Included' : 'Excluded'}
             />
           )}
-          <span className="text-sm font-medium">{PART_LABELS[part]}</span>
+          <span className="truncate text-sm font-medium">{PART_LABELS[part]}</span>
         </div>
         <div className="flex items-center gap-1">
           <VisibilityToggle visible={visible} onToggle={() => toggleVisibility(part)} />

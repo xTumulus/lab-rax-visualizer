@@ -10,7 +10,7 @@ export function VisibilityToggle({ visible, onToggle }: Props) {
       type="button"
       onClick={onToggle}
       title={visible ? 'Hide in viewport' : 'Show in viewport'}
-      className={`grid h-7 w-7 place-items-center rounded transition ${
+      className={`grid h-7 w-7 place-items-center rounded transition pointer-coarse:h-11 pointer-coarse:w-11 ${
         visible ? 'text-white/70 hover:bg-white/10' : 'text-white/30 hover:bg-white/10'
       }`}
     >

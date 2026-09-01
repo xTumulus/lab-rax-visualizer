@@ -20,7 +20,7 @@ export function SizeControl() {
         step={1}
         value={rackU}
         onChange={(e) => setRackU(Number(e.target.value))}
-        className="w-full accent-accent"
+        className="w-full accent-accent pointer-coarse:py-2"
       />
       <div className="mt-1 flex justify-between text-[10px] text-white/40">
         <span>{MIN_U}U</span>
