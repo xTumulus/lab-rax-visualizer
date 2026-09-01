@@ -1,6 +1,8 @@
 import { AdPanel } from './components/layout/ad-panel'
+import { ControlsSheet } from './components/layout/controls-sheet'
 import { Header } from './components/layout/header'
 import { Sidebar } from './components/layout/sidebar'
+import { ViewportHint } from './components/layout/viewport-hint'
 import { Scene } from './components/viewer/scene'
 
 export default function App() {
@@ -12,12 +14,11 @@ export default function App() {
         <Sidebar />
         <main className="relative min-h-0 min-w-0 overflow-hidden">
           <Scene />
-          <div className="pointer-events-none absolute bottom-3 left-3 rounded bg-black/40 px-2 py-1 text-[10px] text-white/40">
-            drag to orbit · scroll to zoom · right-drag to pan
-          </div>
-          <div className="absolute bottom-3 right-3">
+          <ViewportHint className="absolute bottom-[88px] right-3 max-w-[70vw] text-right md:bottom-3" />
+          <div className="absolute bottom-3 left-3 hidden md:block">
             <AdPanel />
           </div>
+          <ControlsSheet />
         </main>
       </div>
     </div>

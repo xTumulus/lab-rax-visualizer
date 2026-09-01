@@ -31,7 +31,7 @@ export function ShelfEditor() {
         </span>
       </div>
 
-      <div className="scroll-thin max-h-72 space-y-2 overflow-y-auto pr-1">
+      <div className="scroll-thin max-h-72 space-y-2 overflow-y-auto pr-1 pointer-coarse:max-h-none">
         {sorted.length === 0 && (
           <p className="rounded bg-black/20 p-2 text-center text-[11px] text-white/40">
             No shelves — add one below.
@@ -52,7 +52,7 @@ export function ShelfEditor() {
               <select
                 value={shelf.shelfType}
                 onChange={(e) => setShelfType(shelf.id, e.target.value as ShelfType)}
-                className="h-7 rounded bg-black/40 px-1 text-xs text-white outline-none ring-1 ring-white/10"
+                className="h-7 rounded bg-black/40 px-1 text-xs text-white outline-none ring-1 ring-white/10 pointer-coarse:h-11"
               >
                 {options.map((t) => (
                   <option key={t.id} value={t.id}>
@@ -70,7 +70,7 @@ export function ShelfEditor() {
                 <button
                   type="button"
                   onClick={() => removeShelf(shelf.id)}
-                  className="rounded px-1.5 text-white/40 hover:bg-red-500/20 hover:text-red-300"
+                  className="grid rounded px-1.5 text-white/40 hover:bg-red-500/20 hover:text-red-300 pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:place-items-center"
                   title="Remove shelf"
                 >
                   ✕
@@ -86,7 +86,7 @@ export function ShelfEditor() {
           type="button"
           onClick={addShelf}
           disabled={full}
-          className="flex-1 rounded bg-accent/20 px-2 py-1.5 text-xs font-medium text-accent hover:bg-accent/30 disabled:opacity-40"
+          className="flex-1 rounded bg-accent/20 px-2 py-1.5 text-xs font-medium text-accent hover:bg-accent/30 disabled:opacity-40 pointer-coarse:py-3"
         >
           + Add shelf
         </button>

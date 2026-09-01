@@ -28,7 +28,7 @@ export function CollapsibleSection({ title, action, collapsible, children, open:
             onClick={() => setOpen(!open)}
             aria-expanded={open}
             aria-controls={bodyId}
-            className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-white/40 hover:text-white/60"
+            className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-white/40 hover:text-white/60 pointer-coarse:py-2"
           >
             <svg
               width="10"

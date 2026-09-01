@@ -5,6 +5,7 @@ import { exportCsv } from '../../export/export-csv'
 import { exportXlsx } from '../../export/export-xlsx'
 import { buildShareUrl } from '../../share/url-state'
 import type { BuildState } from '../../domain/types'
+import { Menu } from '../../ui/menu'
 
 function currentBuild(): BuildState {
   const s = useBuildStore.getState()
@@ -35,7 +36,7 @@ export function Header() {
   }
 
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-white/10 bg-panel px-4 py-2.5">
+    <header className="relative z-20 flex items-center justify-between gap-4 border-b border-white/10 bg-panel px-4 py-2.5">
       <div className="flex items-center gap-3">
         <div className="grid h-8 w-8 place-items-center rounded-md bg-accent/20 text-accent">
           {/* simple logo mark */}
@@ -53,7 +54,7 @@ export function Header() {
         </div>
       </div>
 
-      <div className="hidden items-center gap-4 text-xs text-white/50 sm:flex">
+      <div className="hidden items-center gap-4 text-xs text-white/50 md:flex">
         <span>
           Size <span className="font-semibold text-white/80">{rackU}U</span>
         </span>
@@ -62,25 +63,41 @@ export function Header() {
         </span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="hidden items-center gap-2 sm:flex">
         <button
           onClick={onShare}
-          className="rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10"
+          className="rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10 pointer-coarse:py-2.5"
         >
           {shared ? '✓ Link copied' : 'Share'}
         </button>
         <button
           onClick={() => exportCsv(currentBuild())}
-          className="rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10"
+          className="rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10 pointer-coarse:py-2.5"
         >
           CSV
         </button>
         <button
           onClick={() => exportXlsx(currentBuild())}
-          className="rounded-md bg-accent px-3 py-1.5 text-xs font-semibold text-black hover:brightness-110"
+          className="rounded-md bg-accent px-3 py-1.5 text-xs font-semibold text-black hover:brightness-110 pointer-coarse:py-2.5"
         >
           Export XLSX
         </button>
+      </div>
+
+      <div className="sm:hidden">
+        <Menu
+          label="More actions"
+          items={[
+            { id: 'share', label: shared ? '✓ Link copied' : 'Share', onSelect: onShare },
+            { id: 'csv', label: 'CSV', onSelect: () => exportCsv(currentBuild()) },
+            {
+              id: 'xlsx',
+              label: 'Export XLSX',
+              onSelect: () => exportXlsx(currentBuild()),
+              emphasis: true,
+            },
+          ]}
+        />
       </div>
     </header>
   )
