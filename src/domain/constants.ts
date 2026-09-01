@@ -90,7 +90,7 @@ export function shelfTypeU(id: ShelfType): ShelfU {
 }
 
 // --- Base quantities for the parts list --------------------------------------
-// Fixed-count parts. Shelves and horizontal edges are computed from rackU.
+// Fixed-count parts. Shelves are computed from the shelf list, not this table.
 export const BASE_QUANTITIES: Partial<Record<PartType, number>> = {
   verticalRails: 4, // four posts
   feet: 4,
@@ -100,4 +100,5 @@ export const BASE_QUANTITIES: Partial<Record<PartType, number>> = {
   bottomPanel: 1,
   heroEdge: 1,
   widthRails: 3, // the other 3 width rails (hero counted separately)
+  horizontalEdges: 4, // top-left/top-right/bottom-left/bottom-right depth rails
 }

@@ -144,10 +144,6 @@ are both valid; nothing is forced to fill or stack contiguously.
   and XLSX exports use a `☐` text glyph in the "Done" column. If real
   tickable checkboxes are required, swap `export-xlsx.ts` to use `exceljs`
   instead.
-- **Horizontal edge quantity is an estimate** (`src/domain/parts-list.ts`,
-  `horizontalEdges` case) — it's a simple formula based on rack height, not
-  a precise bill-of-materials count. Tighten this if exact print counts
-  matter.
 - Ad/support panel links (`ad-panel.tsx`) are placeholders pointing at the
   generic Buy Me a Coffee / Patreon homepages — replace with real account
   links before shipping.
