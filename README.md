@@ -50,7 +50,7 @@ src/
     layout/            App chrome
       header.tsx         Branding, live size/part-count, Share/CSV/XLSX buttons
       sidebar.tsx        Scrollable left menu: size → per-part controls → shelves
-      ad-panel.tsx       Unobtrusive support-link panel (bottom of sidebar)
+      support-panel.tsx  Unobtrusive support-link panel (bottom of sidebar), hidden unless VITE_SUPPORT_BMC_URL is set
     controls/          Sidebar form controls, one per concern
       size-control.tsx   4U–12U slider
       part-control.tsx   Reusable row: color swatch + visibility toggle (+ on/off toggle for optional parts)
@@ -144,9 +144,6 @@ are both valid; nothing is forced to fill or stack contiguously.
   and XLSX exports use a `☐` text glyph in the "Done" column. If real
   tickable checkboxes are required, swap `export-xlsx.ts` to use `exceljs`
   instead.
-- Ad/support panel links (`ad-panel.tsx`) are placeholders pointing at the
-  generic Buy Me a Coffee / Patreon homepages — replace with real account
-  links before shipping.
 - No automated tests exist yet (no test runner is configured).
 
 ## Local development
@@ -168,8 +165,21 @@ npm run build     # tsc -b && vite build — production build into dist/
 npm run preview   # serve the dist/ build locally, for a pre-deploy sanity check
 ```
 
-There is no `.env` / environment configuration required — the app has no
-backend calls of any kind.
+No environment configuration is required to run the app — it has no backend
+calls of any kind. One optional variable controls the support panel:
+
+```bash
+cp .env.example .env   # then edit .env with your own Buy Me a Coffee link
+```
+
+| Variable                | Purpose                                                          |
+|--------------------------|-------------------------------------------------------------------|
+| `VITE_SUPPORT_BMC_URL`   | Buy Me a Coffee link shown in the app's support panel. Leave unset (don't create `.env`, or omit the line) to hide the panel entirely. |
+
+`.env` is gitignored, so a personal support link never gets committed to the
+public repo. `npm run build` bakes whatever is in `.env` at build time into
+the static output, so set it before building if you want the panel in your
+deployed build.
 
 ## Deploying to a web server
 
@@ -249,4 +259,4 @@ correctly from any subpath.
 | Adjust camera framing / lighting / ground grid    | `src/components/viewer/scene.tsx`                        |
 | Change how real parts are positioned/oriented    | `src/components/viewer/rack-real.tsx`, measured constants in `src/domain/models.ts` |
 | Add per-part click-to-edit (the stretch feature) | Start from `selectedPartId` in `use-build-store.ts` and the `onPointerMissed` plumbing already in `scene.tsx` |
-| Swap ad/support links                             | `src/components/layout/ad-panel.tsx`                      |
+| Change the support link                           | `VITE_SUPPORT_BMC_URL` in `.env` (see `.env.example`) — no code change needed |

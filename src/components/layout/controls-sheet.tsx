@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { MAX_U, MIN_U } from '../../domain/constants'
 import { totalPartCount } from '../../domain/parts-list'
 import { useBuildStore } from '../../store/use-build-store'
-import { AdPanel } from './ad-panel'
+import { SupportPanel } from './support-panel'
 import { ControlsPanel } from './controls-panel'
 
 type Snap = 'peek' | 'expanded'
@@ -161,7 +161,7 @@ export function ControlsSheet() {
       )}
 
       <div className="scroll-thin min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3">
-        <ControlsPanel footer={<AdPanel variant="inline" />} />
+        <ControlsPanel footer={<SupportPanel variant="inline" />} />
       </div>
     </section>
   )

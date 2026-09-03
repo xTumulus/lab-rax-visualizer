@@ -1,4 +1,4 @@
-import { AdPanel } from './components/layout/ad-panel'
+import { SupportPanel } from './components/layout/support-panel'
 import { ControlsSheet } from './components/layout/controls-sheet'
 import { Header } from './components/layout/header'
 import { Sidebar } from './components/layout/sidebar'
@@ -16,7 +16,7 @@ export default function App() {
           <Scene />
           <ViewportHint className="absolute bottom-[88px] right-3 max-w-[70vw] text-right md:bottom-3" />
           <div className="absolute bottom-3 left-3 hidden md:block">
-            <AdPanel />
+            <SupportPanel />
           </div>
           <ControlsSheet />
         </main>
