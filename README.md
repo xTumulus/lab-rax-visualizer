@@ -259,4 +259,24 @@ correctly from any subpath.
 | Adjust camera framing / lighting / ground grid    | `src/components/viewer/scene.tsx`                        |
 | Change how real parts are positioned/oriented    | `src/components/viewer/rack-real.tsx`, measured constants in `src/domain/models.ts` |
 | Add per-part click-to-edit (the stretch feature) | Start from `selectedPartId` in `use-build-store.ts` and the `onPointerMissed` plumbing already in `scene.tsx` |
-| Change the support link                           | `VITE_SUPPORT_BMC_URL` in `.env` (see `.env.example`) — no code change needed |
+
+## Contributing
+
+Found a bug or have a feature idea? Please open a
+[GitHub Issue](https://github.com/xTumulus/lab-rax-visualizer/issues)
+
+I have no schedule, but I'll try to resolve issues within a week.
+
+===========================================
+
+Want to contribute code?
+
+For anything major, like new features, or large refactors discuss your approach before creating an issue. Create a post in our discord first!
+There is a "contribution"  channel for those who want to be part of our projects! https://discord.gg/kaye3y9Zz.
+
+For trivial changes no discord post is needed.
+
+1. Create a github issue
+2. Fork the repo and create a branch off of `develop`.
+3. Make your change. Run `npm run typecheck` (and `npm run build`) before opening a PR.
+4. Open a pull request against `develop` describing what changed and why. Link the issue it addresses.
