@@ -2,14 +2,12 @@ import { CollapsibleSection } from '../../ui/collapsible-section'
 import { usePersistedBoolean } from '../../ui/use-persisted-state'
 
 /**
- * Unobtrusive support panel. Placeholder links for now — swap the hrefs for
- * your real Patreon / Buy Me a Coffee, and add affiliate / parts-store links
- * later without touching the layout.
+ * Unobtrusive support panel. The link comes from VITE_SUPPORT_BMC_URL
+ * (see .env.example) so a personal support link never lands in the public
+ * repo — anyone building without that var set just gets no panel.
  */
-const LINKS = [
-  { label: '☕ Buy me a coffee', href: 'https://www.buymeacoffee.com/', color: '#ffdd00' },
-  { label: '♥ Patreon', href: 'https://www.patreon.com/', color: '#ff6b6b' },
-]
+const BMC_URL = import.meta.env.VITE_SUPPORT_BMC_URL as string | undefined
+const LINKS = BMC_URL ? [{ label: '☕ Buy me a coffee', href: BMC_URL, color: '#ffdd00' }] : []
 
 interface Props {
   /** 'overlay' floats over the canvas (desktop); 'inline' sits at the bottom
@@ -17,8 +15,10 @@ interface Props {
   variant?: 'overlay' | 'inline'
 }
 
-export function AdPanel({ variant = 'overlay' }: Props) {
+export function SupportPanel({ variant = 'overlay' }: Props) {
   const [collapsed, setCollapsed] = usePersistedBoolean('labrax.ui.supportCollapsed', false)
+
+  if (LINKS.length === 0) return null
 
   const width =
     variant === 'overlay' ? (collapsed ? 'w-fit' : 'w-[clamp(180px,18vw,260px)]') : 'w-full'
