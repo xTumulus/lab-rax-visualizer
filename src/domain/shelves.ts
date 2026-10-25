@@ -106,6 +106,31 @@ export function maxDownGrowth(shelves: Shelf[], shelfId: string, topRow: number)
 }
 
 /**
+ * Swap a shelf with its neighbour directly above (`up`) or below (`down`)
+ * in the rack. The pair keeps occupying the exact same span of rows, and
+ * any gap between them is preserved — only their order within that span
+ * flips — so a move can never overlap another shelf, even when the two
+ * shelves are different sizes. Returns the list unchanged if there's no
+ * neighbour in that direction.
+ */
+export function moveShelf(shelves: Shelf[], id: string, direction: 'up' | 'down'): Shelf[] {
+  const sorted = [...shelves].sort((a, b) => b.startU - a.startU)
+  const index = sorted.findIndex((s) => s.id === id)
+  if (index === -1) return shelves
+  const neighbourIndex = direction === 'up' ? index - 1 : index + 1
+  const neighbour = sorted[neighbourIndex]
+  if (!neighbour) return shelves
+  const [upper, lower] = direction === 'up' ? [neighbour, sorted[index]] : [sorted[index], neighbour]
+  const gap = upper.startU - (lower.startU + lower.u)
+  // `upper` drops to the bottom of the span, `lower` rises to the top.
+  return shelves.map((s) => {
+    if (s.id === upper.id) return { ...s, startU: lower.startU }
+    if (s.id === lower.id) return { ...s, startU: lower.startU + upper.u + gap }
+    return s
+  })
+}
+
+/**
  * Drop shelves that no longer fit at all after a rack resize. Each shelf is
  * now a fixed-size real part (size follows `shelfType`, e.g. always 2U for
  * plate-2u), so a shelf that no longer fits can't be shrunk to fit — it's

@@ -10,7 +10,7 @@ export default function App() {
   return (
     <div className="grid h-full grid-cols-1 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-[#0f1218]">
       <Header />
-      <div className="grid min-h-0 min-w-0 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden md:grid-cols-[minmax(0,288px)_minmax(0,1fr)] lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+      <div className="grid min-h-0 min-w-0 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden md:grid-cols-[minmax(0,312px)_minmax(0,1fr)] lg:grid-cols-[minmax(0,344px)_minmax(0,1fr)]">
         <Sidebar />
         <main className="relative min-h-0 min-w-0 overflow-hidden">
           <Scene />
