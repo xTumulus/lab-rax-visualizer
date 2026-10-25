@@ -12,6 +12,7 @@ export function ShelfEditor() {
   const setShelfStyle = useBuildStore((s) => s.setShelfStyle)
   const addShelf = useBuildStore((s) => s.addShelf)
   const removeShelf = useBuildStore((s) => s.removeShelf)
+  const moveShelf = useBuildStore((s) => s.moveShelf)
 
   const used = sumU(shelves)
   // "Full" means no gap anywhere fits even a 1U shelf — shelves don't have
@@ -37,7 +38,7 @@ export function ShelfEditor() {
             No shelves — add one below.
           </p>
         )}
-        {sorted.map((shelf) => {
+        {sorted.map((shelf, index) => {
           const topRow = shelf.startU + shelf.u - 1
           const cap = Math.max(shelf.u, maxDownGrowth(shelves, shelf.id, topRow))
           const options = SHELF_TYPES.filter((t) => t.u <= cap)
@@ -48,6 +49,26 @@ export function ShelfEditor() {
           const rowLabel = shelf.u === 1 ? `Row ${topRowNum}` : `Rows ${topRowNum}-${bottomRowNum}`
           return (
             <div key={shelf.id} className="flex items-center gap-2 rounded bg-black/30 p-2">
+              <div className="flex flex-col pointer-coarse:flex-row">
+                <button
+                  type="button"
+                  onClick={() => moveShelf(shelf.id, 'up')}
+                  disabled={index === 0}
+                  className="grid rounded px-1 text-[9px] leading-tight text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:hover:bg-transparent pointer-coarse:h-11 pointer-coarse:w-9 pointer-coarse:place-items-center pointer-coarse:text-xs"
+                  title="Move shelf up"
+                >
+                  ▲
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveShelf(shelf.id, 'down')}
+                  disabled={index === sorted.length - 1}
+                  className="grid rounded px-1 text-[9px] leading-tight text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:hover:bg-transparent pointer-coarse:h-11 pointer-coarse:w-9 pointer-coarse:place-items-center pointer-coarse:text-xs"
+                  title="Move shelf down"
+                >
+                  ▼
+                </button>
+              </div>
               <span className="w-14 text-[10px] text-white/40">{rowLabel}</span>
               <select
                 value={shelf.shelfType}

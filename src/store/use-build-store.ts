@@ -12,7 +12,7 @@ import type {
 import { PALETTE_SIZE } from '../domain/types'
 import { MAX_U, MIN_U, shelfTypeU } from '../domain/constants'
 import { DEFAULT_PALETTE, makeAllVisible, makeDefaultBuild } from '../domain/defaults'
-import { clampShelvesToRack, findFirstGap, makeShelf, maxDownGrowth } from '../domain/shelves'
+import { clampShelvesToRack, findFirstGap, makeShelf, maxDownGrowth, moveShelf } from '../domain/shelves'
 import { decodeBuild, readShareParam } from '../share/url-state'
 
 interface BuildActions {
@@ -24,6 +24,7 @@ interface BuildActions {
   setShelfStyle: (id: string, patch: Partial<Omit<Shelf, 'id' | 'u' | 'shelfType'>>) => void
   addShelf: () => void
   removeShelf: (id: string) => void
+  moveShelf: (id: string, direction: 'up' | 'down') => void
   loadBuild: (state: BuildState) => void
   reset: () => void
   /** stretch-feature scaffolding: currently selected part instance id */
@@ -123,6 +124,9 @@ export const useBuildStore = create<BuildStore>()(
 
       removeShelf: (id) =>
         set((s) => ({ shelves: s.shelves.filter((sh) => sh.id !== id) })),
+
+      moveShelf: (id, direction) =>
+        set((s) => ({ shelves: moveShelf(s.shelves, id, direction) })),
 
       loadBuild: (state) =>
         set(() => ({
