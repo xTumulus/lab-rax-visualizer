@@ -40,6 +40,19 @@ function prepareGeometry(
   return { geometry: geo, size }
 }
 
+/** Re-center to bottom-center and measure; shared tail of the prepare steps. */
+function finishGeometry(geo: THREE.BufferGeometry): PreparedGeometry {
+  geo.computeBoundingBox()
+  const center = new THREE.Vector3()
+  geo.boundingBox!.getCenter(center)
+  geo.translate(-center.x, -geo.boundingBox!.min.y, -center.z)
+  geo.computeBoundingBox()
+  geo.computeVertexNormals()
+  const size = new THREE.Vector3()
+  geo.boundingBox!.getSize(size)
+  return { geometry: geo, size }
+}
+
 function firstMeshGeometry(root: THREE.Object3D): THREE.BufferGeometry {
   root.updateWorldMatrix(true, true)
   let found: THREE.BufferGeometry | null = null
@@ -72,4 +85,21 @@ export function use3mfPart(file: string, extraRotY = 0): PreparedGeometry {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [group, extraRotY],
   )
+}
+
+/**
+ * Load the support extension. It is saved print-flat and diagonal in the XY
+ * plane, so rotate it square, then map: long edge -> scene Z (front to back),
+ * 84mm edge -> scene Y (up), thickness -> scene X, with the thin web side
+ * facing +X (outward, for the right-hand copy).
+ */
+export function useExtensionPart(file: string, rawRotZ: number): PreparedGeometry {
+  const raw = useLoader(STLLoader, MODEL_BASE + file)
+  return useMemo(() => {
+    const geo = raw.clone()
+    geo.rotateZ(rawRotZ)
+    // (x, y, z) -> (X = -z, Y = y, Z = x): a proper rotation, no mirroring.
+    geo.applyMatrix4(new THREE.Matrix4().set(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1))
+    return finishGeometry(geo)
+  }, [raw, rawRotZ])
 }

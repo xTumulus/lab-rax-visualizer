@@ -12,11 +12,14 @@ import {
   U_MM,
   VERTICAL_RAIL_FILES,
   WIDTH_RAIL_BAR_TOP_MM,
-  decomposeIntoSegments,
+  SUPPORT_EXTENSION_FILE,
+  SUPPORT_EXTENSION_RAW_ROT,
+  SUPPORT_EXTENSION_TAB_MM,
 } from '../../domain/models'
 import type { ShelfType } from '../../domain/types'
+import { layoutItems, resolveLayout } from '../../domain/layout'
 import { useBuildStore } from '../../store/use-build-store'
-import { use3mfPart, useStlPart } from './materials/use-model-geometry'
+import { use3mfPart, useExtensionPart, useStlPart } from './materials/use-model-geometry'
 import type { PreparedGeometry } from './materials/use-model-geometry'
 import { RealMesh } from './parts/real-mesh'
 
@@ -24,6 +27,8 @@ const PI = Math.PI
 
 export function RackReal() {
   const rackU = useBuildStore((s) => s.rackU)
+  const joinMode = useBuildStore((s) => s.joinMode)
+  const splitPrefs = useBuildStore((s) => s.splits)
   const parts = useBuildStore((s) => s.parts)
   const toggles = useBuildStore((s) => s.toggles)
   const shelves = useBuildStore((s) => s.shelves)
@@ -48,6 +53,7 @@ export function RackReal() {
   const widthRail = use3mfPart(MODEL_FILES.railHorizontalWidth)
   const depthRail = useStlPart(MODEL_FILES.railHorizontalDepth)
   const topBottomPanel = useStlPart(MODEL_FILES.panelTopBottom)
+  const extension = useExtensionPart(SUPPORT_EXTENSION_FILE, SUPPORT_EXTENSION_RAW_ROT)
   const foot = use3mfPart(MODEL_FILES.foot)
   const handle = use3mfPart(MODEL_FILES.handle)
 
@@ -71,7 +77,7 @@ export function RackReal() {
   }
 
   const totalHeight = rackU * U_MM
-  const segments = decomposeIntoSegments(rackU)
+  const items = layoutItems(resolveLayout(rackU, joinMode, splitPrefs), joinMode)
 
   const corners = [
     { key: 'fl', x: -RACK_HALF_WIDTH_MM, z: RACK_HALF_DEPTH_MM, railRotY: 0, railMirror: false },
@@ -144,7 +150,14 @@ export function RackReal() {
           const railX = railXByKey[c.key as keyof typeof railXByKey]
           return (
             <Fragment key={`rail-${c.key}`}>
-              {segments.map((len, i) => {
+              {items.map((item, i) => {
+                // Extension modules are drawn once per side below; here they
+                // just leave a 1U gap in the post.
+                if (item.kind === 'extension') {
+                  y += U_MM
+                  return null
+                }
+                const len = item.u
                 const seg = railByLen[len as keyof typeof railByLen]
                 const mesh = (
                   <RealMesh
@@ -186,7 +199,12 @@ export function RackReal() {
           let y = depthRail.size.y - SIDE_PANEL_DEPTH_RAIL_OVERLAP_MM
           return (
             <Fragment key={`panel-${side}`}>
-              {segments.map((len, i) => {
+              {items.map((item, i) => {
+                if (item.kind === 'extension') {
+                  y += U_MM
+                  return null
+                }
+                const len = item.u
                 const seg = panelByLen[len as keyof typeof panelByLen]
                 const outerFaceX = widthRail.size.x / 2 - SIDE_PANEL_OUTER_INSET_MM
                 const x = sign * (outerFaceX - seg.size.x / 2)
@@ -205,6 +223,36 @@ export function RackReal() {
             </Fragment>
           )
         })}
+
+      {/* Support extensions: one per side at each join, in the posts' own X
+          column, centered front-to-back. The part is 1U of body plus a tab
+          overlapping into the section above and below, so it starts one tab
+          below the 1U slot. The left copy is the mirror of the right. */}
+      {visibility.verticalRails &&
+        (() => {
+          let offsetU = 0
+          const placed: number[] = []
+          for (const item of items) {
+            if (item.kind === 'extension') placed.push(offsetU)
+            offsetU += item.kind === 'extension' ? 1 : item.u
+          }
+          return placed.flatMap((u) =>
+            (
+              [
+                { side: 'right', x: rightRailX, scale: undefined },
+                { side: 'left', x: leftRailX, scale: [-1, 1, 1] as [number, number, number] },
+              ] as const
+            ).map(({ side, x, scale }) => (
+              <RealMesh
+                key={`ext-${side}-${u}`}
+                geometry={extension.geometry}
+                color={parts.verticalRails.color}
+                position={[x, WIDTH_RAIL_BAR_TOP_MM + u * U_MM - SUPPORT_EXTENSION_TAB_MM, 0]}
+                scale={scale}
+              />
+            )),
+          )
+        })()}
 
       {/* Width rails: front/back x top/bottom. The top-front slot
           (z=-RACK_HALF_DEPTH_MM, still keyed 'front-top' from an earlier

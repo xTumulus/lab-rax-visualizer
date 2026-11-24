@@ -71,8 +71,14 @@ export const PALETTE_SIZE = 6
 /** A shared 6-color palette; part swatches pick from this instead of a full picker. */
 export type Palette = string[]
 
+/** How rail/panel sections are joined when the rack is taller than 5U. */
+export type JoinMode = 'joiners' | 'extensions'
+
 export interface BuildState {
   rackU: number
+  joinMode: JoinMode
+  /** Preferred heights (U) of the bottom and middle rail/panel sections. */
+  splits: [number, number]
   parts: Record<PartType, PartStyle>
   toggles: Toggles
   shelves: Shelf[]

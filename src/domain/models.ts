@@ -7,20 +7,7 @@ import type { ShelfType } from './types'
 export const MODEL_BASE = '/models-3d/'
 
 // Rail/panel segments are exact multiples of 44.45mm and are only available
-// in these lengths. Any rack height is built by greedily stacking segments
-// (largest first), e.g. 8U -> [5, 3].
-export function decomposeIntoSegments(u: number): number[] {
-  if (u <= 0) return []
-  const segments: number[] = []
-  let remaining = u
-  while (remaining > 5) {
-    segments.push(5)
-    remaining -= 5
-  }
-  segments.push(remaining)
-  return segments
-}
-
+// in 1-5U lengths; taller racks stack several (see domain/layout.ts).
 export const VERTICAL_RAIL_FILES: Record<number, string> = {
   1: 'rail-height-1u.stl',
   2: 'rail-height-2u.stl',
@@ -76,6 +63,27 @@ export const RACK_HALF_DEPTH_MM = RACK_DEPTH_MM / 2
 
 export const FOOT_HEIGHT_MM = 12
 
+/** Handle height (measured from handle.3mf); it sits on top of the top rails. */
+export const HANDLE_HEIGHT_MM = 32.5
+
+// Frame envelope, measured from rail-width.3mf (282.25 wide, 54.85 deep).
+export const WIDTH_RAIL_WIDTH_MM = 282.25
+export const WIDTH_RAIL_DEPTH_MM = 54.85
+export const RACK_OUTER_WIDTH_MM = WIDTH_RAIL_WIDTH_MM
+export const RACK_OUTER_DEPTH_MM = RACK_DEPTH_MM + WIDTH_RAIL_DEPTH_MM
+
+/**
+ * Support extension: a 1U brace per side that joins two rail sections and
+ * replaces 1U of rail + side panel. Measured: 240 long (front to back), 84.15
+ * tall (44.45 body + a tab overlapping ~19.85 into the section on each side),
+ * 30 thick.
+ */
+export const SUPPORT_EXTENSION_FILE = 'support-extension-1u.stl'
+export const SUPPORT_EXTENSION_HEIGHT_MM = 84.15
+export const SUPPORT_EXTENSION_TAB_MM = (SUPPORT_EXTENSION_HEIGHT_MM - U_MM) / 2
+/** Rotation about the raw STL's Z (print-flat) axis that aligns its long edge with X. */
+export const SUPPORT_EXTENSION_RAW_ROT = (134 * Math.PI) / 180
+
 /**
  * Distance from the depth rail's own center to its front-most / back-most
  * mounting hole, measured from the mesh (a row of evenly-spaced holes at
@@ -103,3 +111,20 @@ export const WIDTH_RAIL_BAR_TOP_MM = 33.773
  * (175.9mm, depth-spanning) face comes out on the wrong axis otherwise.
  */
 export const SIDE_PANEL_EXTRA_ROT_Y = Math.PI / 2
+
+/**
+ * Overall rack size in mm: posts plus the top and bottom width rails, plus
+ * the feet and handles when those parts are included. Extension modules
+ * replace rail height 1:1, so they don't change it.
+ */
+export function overallSizeMm(rackU: number, withFeet: boolean, withHandles: boolean) {
+  return {
+    width: RACK_OUTER_WIDTH_MM,
+    depth: RACK_OUTER_DEPTH_MM,
+    height:
+      rackU * U_MM +
+      2 * WIDTH_RAIL_BAR_TOP_MM +
+      (withFeet ? FOOT_HEIGHT_MM : 0) +
+      (withHandles ? HANDLE_HEIGHT_MM : 0),
+  }
+}

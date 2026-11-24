@@ -1,7 +1,7 @@
 # Lab Rax Planner
 
 A browser-based visualizer and parts-list planner for [Lab Rax](https://the-diy-life.com/introducing-lab-rax-a-3d-printable-modular-10-rack-system/),
-a 3D-printable modular 10" rack system. Users pick a rack height (4U–12U),
+a 3D-printable modular 10" rack system. Users pick a rack height (2U–15U),
 color each part, lay out shelves, and see a real-time 3D model — built from
 the actual Lab Rax STL/3MF part files — update in the viewport. The build
 can be exported as a checkable parts list (CSV or XLSX) and shared via URL.
@@ -31,7 +31,8 @@ produces a static `dist/` folder deployable to any static host.
 src/
   domain/            Pure logic — no React, no Three.js. Start here to understand the model.
     types.ts           Core types: PartType, PartStyle, Shelf, Toggles, BuildState
-    constants.ts       Size range (4U–12U), part labels/quantities, pattern registry
+    layout.ts          Rail/panel section layout, joiners vs extensions
+    constants.ts       Size range (2U–15U), part labels/quantities, pattern registry
     models.ts          Real-part config: STL/3MF filenames, measured mm offsets used to lay parts out
     defaults.ts        Factory for a fresh default BuildState
     shelves.ts         Shelf placement/gap-finding and resize-clamping logic
@@ -52,7 +53,7 @@ src/
       sidebar.tsx        Scrollable left menu: size → per-part controls → shelves
       support-panel.tsx  Unobtrusive support-link panel (bottom of sidebar), hidden unless VITE_SUPPORT_BMC_URL is set
     controls/          Sidebar form controls, one per concern
-      size-control.tsx   4U–12U slider
+      size-control.tsx   2U–15U slider, overall size, joiner/extension choice and section sliders
       part-control.tsx   Reusable row: color swatch + visibility toggle (+ on/off toggle for optional parts)
       shelf-editor.tsx   Ordered shelf list with per-shelf type/color + add/remove
       colors-section.tsx Shared 6-swatch palette editor
@@ -91,8 +92,10 @@ geometries using constants measured directly from the models
 (`src/domain/models.ts`) rather than nominal/idealized dimensions — rails,
 panels, and shelves are mirrored/rotated/offset to snap together the same
 way the physical parts do. Height changes are handled by greedily stacking
-the fixed segment lengths that actually exist as files (`decomposeIntoSegments`),
-e.g. 8U → a 5U + a 3U rail.
+the fixed 1–5U segment lengths that actually exist as files (`src/domain/layout.ts`),
+e.g. 8U → a 5U + a 3U rail joined by 4 joiners, or a 5U + a 2U rail with two
+1U support extensions between them. Section heights are adjustable so people
+extending an existing rack can reuse the parts they already have.
 
 ### Shelf placement
 

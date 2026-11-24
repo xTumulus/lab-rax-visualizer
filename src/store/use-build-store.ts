@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type {
   BuildState,
+  JoinMode,
   OptionalPart,
   PartStyle,
   PartType,
@@ -17,6 +18,9 @@ import { decodeBuild, readShareParam } from '../share/url-state'
 
 interface BuildActions {
   setRackU: (u: number) => void
+  setJoinMode: (mode: JoinMode) => void
+  /** Set the preferred height of the bottom (0) or middle (1) rail section. */
+  setSplit: (index: 0 | 1, u: number) => void
   setPartStyle: (part: PartType, patch: Partial<PartStyle>) => void
   setPaletteColor: (index: number, color: string) => void
   toggle: (part: OptionalPart) => void
@@ -35,6 +39,11 @@ interface BuildActions {
 }
 
 export type BuildStore = BuildState & BuildActions
+
+const validSplits = (v: unknown): [number, number] | null =>
+  Array.isArray(v) && v.length === 2 && v.every((n) => typeof n === 'number' && Number.isFinite(n))
+    ? [v[0], v[1]]
+    : null
 
 const clampU = (u: number) => Math.max(MIN_U, Math.min(MAX_U, Math.round(u)))
 
@@ -55,6 +64,15 @@ export const useBuildStore = create<BuildStore>()(
           const delta = rackU - s.rackU
           const shifted = s.shelves.map((sh) => ({ ...sh, startU: sh.startU + delta }))
           return { rackU, shelves: clampShelvesToRack(shifted, rackU) }
+        }),
+
+      setJoinMode: (joinMode) => set(() => ({ joinMode })),
+
+      setSplit: (index, u) =>
+        set((s) => {
+          const splits: [number, number] = [...s.splits]
+          splits[index] = Math.round(u)
+          return { splits }
         }),
 
       setPartStyle: (part, patch) =>
@@ -127,6 +145,8 @@ export const useBuildStore = create<BuildStore>()(
       loadBuild: (state) =>
         set(() => ({
           rackU: clampU(state.rackU),
+          joinMode: state.joinMode,
+          splits: state.splits,
           parts: state.parts,
           toggles: state.toggles,
           shelves: clampShelvesToRack(state.shelves, clampU(state.rackU)),
@@ -148,6 +168,8 @@ export const useBuildStore = create<BuildStore>()(
       // Only persist the build itself, not transient UI selection state.
       partialize: (s): BuildState => ({
         rackU: s.rackU,
+        joinMode: s.joinMode,
+        splits: s.splits,
         parts: s.parts,
         toggles: s.toggles,
         shelves: s.shelves,
@@ -173,6 +195,8 @@ export const useBuildStore = create<BuildStore>()(
         return {
           ...current,
           ...p,
+          joinMode: p.joinMode === 'extensions' ? 'extensions' : 'joiners',
+          splits: validSplits(p.splits) ?? current.splits,
           parts: { ...current.parts, ...p.parts },
           toggles: { ...current.toggles, ...p.toggles },
           // Also backfills `shelfType` on shelves saved before that field

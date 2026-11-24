@@ -50,6 +50,8 @@ export function makeAllVisible(): PartVisibility {
 export function makeDefaultBuild(): BuildState {
   return {
     rackU: DEFAULT_U,
+    joinMode: 'joiners',
+    splits: [5, 5],
     parts: structuredClone(DEFAULT_STYLES),
     toggles: { ...DEFAULT_TOGGLES },
     shelves: defaultShelves(DEFAULT_U),

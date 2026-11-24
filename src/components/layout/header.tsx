@@ -9,19 +9,21 @@ import { Menu } from '../../ui/menu'
 
 function currentBuild(): BuildState {
   const s = useBuildStore.getState()
-  return { rackU: s.rackU, parts: s.parts, toggles: s.toggles, shelves: s.shelves, palette: s.palette }
+  return { rackU: s.rackU, joinMode: s.joinMode, splits: s.splits, parts: s.parts, toggles: s.toggles, shelves: s.shelves, palette: s.palette }
 }
 
 export function Header() {
   const rackU = useBuildStore((s) => s.rackU)
   // subscribe to the pieces that affect the count so it stays live
+  const joinMode = useBuildStore((s) => s.joinMode)
+  const splits = useBuildStore((s) => s.splits)
   const parts = useBuildStore((s) => s.parts)
   const toggles = useBuildStore((s) => s.toggles)
   const shelves = useBuildStore((s) => s.shelves)
   const palette = useBuildStore((s) => s.palette)
   const [shared, setShared] = useState(false)
 
-  const count = totalPartCount({ rackU, parts, toggles, shelves, palette })
+  const count = totalPartCount({ rackU, joinMode, splits, parts, toggles, shelves, palette })
 
   const onShare = async () => {
     const url = buildShareUrl(currentBuild())
