@@ -5,8 +5,8 @@ import type { OptionalPart, PartType, PatternId, ShelfType, ShelfU } from './typ
 export const SCALE = 100
 
 // --- Size range --------------------------------------------------------------
-export const MIN_U = 4
-export const MAX_U = 12
+export const MIN_U = 2
+export const MAX_U = 15
 export const DEFAULT_U = 6
 
 // --- Part types (menu order) -------------------------------------------------
@@ -90,12 +90,11 @@ export function shelfTypeU(id: ShelfType): ShelfU {
 }
 
 // --- Base quantities for the parts list --------------------------------------
-// Fixed-count parts. Shelves are computed from the shelf list, not this table.
+// Fixed-count parts. Height rails and side panels are counted per section
+// (see domain/layout.ts) and shelves from the shelf list, not this table.
 export const BASE_QUANTITIES: Partial<Record<PartType, number>> = {
-  verticalRails: 4, // four posts
   feet: 4,
   handles: 2,
-  sidePanels: 2,
   topPanel: 1,
   bottomPanel: 1,
   heroEdge: 1,

@@ -17,6 +17,8 @@ function fromBase64Url(b64url: string): string {
 export function encodeBuild(state: BuildState): string {
   const compact = {
     u: state.rackU,
+    j: state.joinMode,
+    x: state.splits,
     p: state.parts,
     t: state.toggles,
     s: state.shelves,
@@ -30,6 +32,8 @@ export function decodeBuild(param: string): BuildState | null {
   try {
     const raw = JSON.parse(fromBase64Url(param)) as {
       u?: unknown
+      j?: unknown
+      x?: unknown
       p?: unknown
       t?: unknown
       s?: unknown
@@ -39,6 +43,12 @@ export function decodeBuild(param: string): BuildState | null {
 
     const rackU =
       typeof raw.u === 'number' ? Math.max(MIN_U, Math.min(MAX_U, Math.round(raw.u))) : base.rackU
+
+    const joinMode = raw.j === 'extensions' ? 'extensions' : 'joiners'
+    const splits: [number, number] =
+      Array.isArray(raw.x) && raw.x.length === 2 && raw.x.every((n) => typeof n === 'number' && Number.isFinite(n))
+        ? [raw.x[0], raw.x[1]]
+        : base.splits
 
     // Merge parts defensively — keep defaults for any missing/invalid part.
     const parts = { ...base.parts }
@@ -82,7 +92,7 @@ export function decodeBuild(param: string): BuildState | null {
       palette = raw.c as Palette
     }
 
-    return { rackU, parts, toggles, shelves, palette }
+    return { rackU, joinMode, splits, parts, toggles, shelves, palette }
   } catch {
     return null
   }

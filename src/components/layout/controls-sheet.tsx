@@ -37,11 +37,13 @@ interface DragState {
 export function ControlsSheet() {
   const rackU = useBuildStore((s) => s.rackU)
   const setRackU = useBuildStore((s) => s.setRackU)
+  const joinMode = useBuildStore((s) => s.joinMode)
+  const splits = useBuildStore((s) => s.splits)
   const parts = useBuildStore((s) => s.parts)
   const toggles = useBuildStore((s) => s.toggles)
   const shelves = useBuildStore((s) => s.shelves)
   const palette = useBuildStore((s) => s.palette)
-  const count = totalPartCount({ rackU, parts, toggles, shelves, palette })
+  const count = totalPartCount({ rackU, joinMode, splits, parts, toggles, shelves, palette })
 
   const [snap, setSnap] = useState<Snap>('peek')
   const [dragging, setDragging] = useState(false)
